@@ -96,25 +96,49 @@ for (i in levels(dist.bins2)){
   cor.site.list.random [[j]] = sum(n.in.bin*mean_in_bin)/sum(n.in.bin)
   j=j+1
 }
-lines(bins.2,unlist( cor.site.list.random), col="green")
+#lines(bins.2,unlist( cor.site.list.random), col="green")
 ;cor.site.list.random
 }
 set.seed(1052)
 cor.site.list.random.store =list()
-for(i in 1:100){
+for(i in 1:1000){
 cor.site.list.random.store[[i]] =unlist(add.random.line())
 }
-
-y0 = min(sapply(cor.site.list.random.store,function(x){min(x[-length(x)])}))
-y1= max(unlist(cor.site.list2)[-length(unlist(cor.site.list2))])
-plot(bins.2,unlist(cor.site.list2), ylab="Average correlation of residuals", xlab="pairwise distance of sites (m)", ylim = c(y0,y1), type="o",cex.lab=1.5, cex.axis=1.5)
-for(i in 1:100){
-  lines(bins.2,unlist( cor.site.list.random.store[[i]]),col="grey")
+cor.site.list.random.store2 = matrix(NA, nrow = length(cor.site.list.random.store[[1]]), ncol = length(cor.site.list.random.store))
+for ( i  in 1:length(cor.site.list.random.store)){
+  cor.site.list.random.store2[,i] = cor.site.list.random.store[[i]]
 }
-abline(h=0, lwd=2)
-abline (h = mean(cor.site.ordered.by.dist), col="red",lwd=2)
-lines(bins.2,unlist(cor.site.list2), col="orange",type="o",lwd=2)
+
+perc = function(x, percent){
+  x_ordered = x[order(x)]
+  x_percent = x_ordered[ceiling(length(x)*percent)]
+  ;
+  x_percent
+}
+
+envelope_95 = apply( cor.site.list.random.store2 , 1, perc, percent=0.95)[-length(bins.2)]
+envelope_5 = apply( cor.site.list.random.store2 , 1, perc, percent=0.05)[-length(bins.2)]
+polygon_x = c(bins.2[-length(bins.2)], rev(bins.2[-length(bins.2)]))
+
+y0 = min(c(envelope_5))
+y1= max(c(unlist(cor.site.list2)[-length(unlist(cor.site.list2))]))
+
+dev.off()
+pdf("Plots/PlotAutoCorrelation.pdf")
+layout(rbind(1,2), heights=c(5,1.5))  # put legend on bottom 1/8th of the chart
+
+plot(bins.2,unlist(cor.site.list2), ylab="Average correlation", xlab="pairwise distance of sites (m)", ylim = c(y0,y1), type="o",cex.lab=1.5, cex.axis=1.5, xlim=c(0,300000))
+polygon(polygon_x , c(envelope_95,rev(envelope_5)), col="grey",lty=0)
+abline(h=0, lwd=1, lty=2)
+lines(bins.2,unlist(cor.site.list2), col="black",type="o",lwd=2)
 
 
-legend(100000,0.004,c("data", "average correlation" ,"correlation = 0","simulation envelope","(under independence)"), col = c("orange","red","black","grey",0), lwd =c(2,2,2,1,1),cex=1.5)
+# setup for no margins on the legend
+par(mar=c(0, 0, 0, 0))
+# c(bottom, left, top, right)
+plot.new()
+legend(x="center", c("Average correlation in each bin","95% simulation envelope", "Correlation = 0"), col = c("black","grey","black"), lwd =c(2,2,1),cex=1.5, lty=c(1,0,2), fill=c(NA,"grey",NA), border=c(0,1,0),merge=T)
+dev.off()
+
+
 save.image(file="plotSiteCorrelation.RData")
