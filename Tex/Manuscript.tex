@@ -1,0 +1,285 @@
+
+
+\documentclass[a4paper,12pt]{article}
+\usepackage{makeidx}
+\usepackage{showidx}
+\usepackage[space]{grffile}
+\usepackage{graphicx,amsmath,natbib,color,lineno}
+
+\usepackage{soul}
+\usepackage{microtype}
+%\DisableLigatures{encoding = *, family = * }
+%\usepackage{lmodern}
+\usepackage[OT1]{fontenc}
+%\pagestyle{empty} 
+\pdfimageresolution=300
+%\renewcommand{\baselinestretch}{2}
+%\RequirePackage[OT1]{fontenc}
+%\usepackage[T1]{fontenc}
+\RequirePackage{amsthm,amsmath}
+\usepackage{natbib}
+\RequirePackage[colorlinks,citecolor=blue,urlcolor=blue]{hyperref}
+%\RequirePackage{hypernat}
+\RequirePackage{graphicx}
+\usepackage{color}
+\newcommand{\hilight}[1]{\colorbox{yellow}{#1}}
+%footnote
+\makeatletter
+\newcommand\footnoteref[1]{\protected@xdef\@thefnmark{\ref{#1}}\@footnotemark}
+\makeatother
+
+
+\makeindex 
+\parskip 8pt
+\linenumbers  
+\belowcaptionskip 0.2cm
+\textheight 25cm
+\textwidth 16cm
+\topmargin -1cm
+\oddsidemargin 0cm
+\evensidemargin 0cm
+\renewcommand{\footnoterule}{\rule{0cm}{0cm}}
+
+\newcommand{\ie}{\emph{i.e.}\ }
+\newcommand{\eg}{\emph{e.g.}\ }
+%\IfFileExists{/etc/motd}{\newcommand{\hdrive}{/home/nfs/z3354192/hdrive/}}{\newcommand{\hdrive}{H:/}}
+\IfFileExists{/etc/motd}{\newcommand{\hdrive}{/home/nfs/z3354192/hdrive/}}{\newcommand{\hdrive}{H:}}
+\begin{document}
+\vspace*{2cm} 
+The Moving Block Bootstap in Ecology- Community-level modelling. 
+\vspace{1cm}
+
+
+
+
+spatial BB in sdm/ multivariate type settings. 
+\section{Introduction}
+
+
+Spatial auto-correlation, where observations close in space are correlated due to their geographic proximity, is a common feature of ecological data used in species distribution models (SDMs) \citep{taper2004bootstrapping}. However, missing from the suite of tools ecologists generally draw on to address this issue, is the moving block bootstrap. The block bootstrap is a non-parametric approach, meaning it can be applied in scenarios where common spatial SDM tools are not feasible. For example, it can come in handy in multi-species scenarios where species responses are correlated with each other as well as spatially auto-correlated, a situation commonly deployed parametric methods struggle with. Here we introduce and demonstrate the use of this under exposed tool for SDM type applications: the moving block bootstrap.
+
+
+%Gist: Spatial correlation is an issue ecologists often need to pay attention to, and a fair bit of literature is devoted to how to deal with this problem. How are people currently dealing with it.
+
+ 
+Spatially auto-correlated data violates the assumption many statistical procedures have, namely that observations are independent of one another. This means that many standard statistical models (e.g. generalised linear models) require modification. In many cases, ignoring spatial auto-correlation results in underestimation of standard errors due to pseudo replication of observations. Methods for detecting spatial autocorrelation have been covered extensively in literature for ecologists \citep[e.g][]{f2007methods}, with tools such as Morans I statistic [], Geary’s c statistic and semi-variograms readily available for implementation (e.g. spatstat []). Furthermore, ecologists have taken up approaches for dealing with spatial autocorrelation. The approaches typically incorporate the spatial auto-correlation into the model using spatial autoregressive models, auto-covariate models, GEE’s etc, but involve estimation of additional model parameters, which may not be possible with sparse data. Furthermore, they have not been extended to multivariate situations where correlated response variables exhibit spatial auto-correlation. A non parametric method that can overcome some of these issues is the moving block bootstrap.  However, despite its clear application to spatial data, the block bootstrap is not mentioned in most methods texts aimed at helping ecologists deal with spatial auto-correlation \citep[e.g][]{f2007methods}, used only rarely in ecological settings [Taper] and basically never in species distribution modelling literature. Searching for “species distribution modelling” and “block bootstrap” in GoogleScholar resulted in only two papers. 
+
+%The block bootstrap is a useful tool for correlated data, very brief history of statistical developments and say what it is. But it is rarely mentioned with respect to ecology and basically never in SDM lit.
+The broader class of resampling methods, including the moving block bootstrap, are useful when the distributions of statistics are not well understood, as is the case for statistics derived from multivariate abundance data where the species responses are correlated in unknown ways []. 
+The procedure relies on the idea that empirical distributions of statistics or coefficients can be recovered by resampling the original data [cite].
+The moving block bootstrap [] is an adaptation of the bootstrapping method, for dependent observations (which violate the independence requirement of the standard bootstrap), where the dependence has a particular correlation structure (serial correlation?). It was developed originally to handle temporal auto-correlation of time series measurements by resampling “snippets” of consecutive observations [], but extensions [] lead to its applicability for spatially correlated measurements, by resampling blocks of nearby observations. Key to the process is the block length, or block radius parameter $b$. As the blocks of observations are treated as independent by the block bootstrap(?), observations $b$ distance apart are considered independent (the auto-correlation function has decayed so much that this correlation can be ignored). This procedure ensures that the spatial correlation is accounted for when estimating standard errors of statistics and coefficients.
+
+
+
+%Present a review of literature relating to application of block bootstrap in ecology, after first mentioning where else the bootstrap is prevalent. Demonstrate that it is quite useful! 
+The block bootstrap has been applied to handle spatial auto-correlation in fields like hydrology and atmospheric science, which deal with geographical data.
+The temporal block bootstrap ...
+In ecological sciences there have been a few instances of the use of the block bootstrap to handle temporal correlation of repeated measures data \citep[such as][]{clarke2003validating, nelson2012long,hinrichsen2013role}. For example, \cite{clarke2003validating} used a temporal block bootstrap to construct $95\%$ confidence intervals of sea bird population size, where sampling had been done over time. 
+\cite{zhu2004nonparametric} used the block bootstrap to develop a method for analysing repeated measures of spatially correlated data. They were able to compare temporal trends in the number of root lesion nematodes based on several spatial samples of this quantity, (resampling spatially contiguous blocks). The block bootstrap was used effectively when both spatial and temporal correlation is present, and statistical distributions of quantities of interest are complicated, by resampling spatial-temporal units \citep[e.g.][]{valpine2010synchrony,reineking2010environmental}. Reineking, when modelling influences on forest fires with gridded (and time stamped) presence/ absence data, fitted logistic regression models (which assumes space-time units are independent) but then resampled blocks of data contiguous in space and time to calculate the uncertainty of evaluative measures like AUC and likelihood. Valpine also used spatial-temporal resampling units when estimating uncertainty in the level of correlation between population synchrony and distance. 
+
+
+%However the block bootstrap has much more potential, especially in species distribution modelling where it has been used only a couple of times, despite the breadth of SDM type research. The reason for this is probably lack of awareness and approachable literature. 
+The examples above demonstrate the potential of this tool for doing rigorous statistics when spatial and or temporal correlation is present, but their isolation indicates how underutilised the block bootstrap is in ecology, and especially in species distribution modelling. Given the prevalence of species distribution modelling, often with spatially auto-correlated data, it is surprising more practitioners have not used the block bootstrap. The block bootstrap needs to be brought to the attention of ecologists doing species distribution models, and added to the list of tools for spatial auto-correlation they can draw on. 
+
+
+Here we explain the moving block bootstrap and how it can be applied to spatially auto-correlated data. In particular we see how useful it can be for calculating standard errors of complicated statistics based on multi species data. We look an assemblage of ferns, and based on their fitted distribution models (using GLMS’s), we calculate the number of species expected to become critically endangered under climate change. Due to correlation between species and between sites, we use a moving block bootstrap to determine the standard error of this estimate. We aim to familiarise more ecologists with this spatial analysis tool.
+
+
+
+
+\section{Background}
+\subsection{Bootstrapping}
+
+Bootstrapping is a way to uncover the distribution of a data derived quantity ($T$) by resampling the data with replacement, and recalculating the quantity many times to get a sample $T^*_1,...,T^*_N$ . The basic principle is that as $N$ becomes large, the distribution of $T^*$ approaches the distribution of $T$, assuming the data are independent and identically distributed.  \cite{potvin1993distribution} made the case for non-parametric resampling methods in ecology given the high incidence of non-normal data. Since then bootstrapping has entered the lexicon of ecologists and species distribution modellers as a standard technique for calculating standard errors of ``wierd'' things whose distribution are not known (e.g. segurado and araujo 2004 JB to bootstrap SE's of SDM sensitivity estimates, and Vaughan JAE 2005 discuss using bootstrap to calculate the performance of SDMs). However, the standard bootstrap is not suitable for cases when observations are not independent (and identically distributed) (i.i.d), as is the case when the data are spatial, and this is where the block bootstrap offers a solution. 
+
+
+%The basic principle is that if we have a dataset X, consisting of observations x1,...xn, and a quantity T(X) which is some function of the data X, we can estimate the uncertainty of T(X) by bootstrapping. We draw n times with replacement from x1,...,xn to create a pseudo sample X*=x1*,...,xn* (e.g. n=7 X*=x1,...,x7, X*=x1,x1,x3,x5,x7,x7,x7). We then calculate T(X*). We repeat this N times so we have a sample of length N Tsamp= T1(X*1),T(X*2)...T(X*N). SD(Tsamp) gives the standard error of T. The same process can also derive p values. For example P(T<T(X))=proportion of times Tsamp<T(X)). This process relies on asymptotics, i.e. they are asymptotically true as N approaches infinity, so large N should be used. Furthermore, there is an assumption that x1,...xn are independent. This assumption is relaxed in the block bootstrap and that is why the block bootstrap can be used to handle spatially and temporally correlated data. 
+\subsection{Block Bootstrapping}
+
+When data are spatial, the block bootstrap offers a non parametric approach to inference. It can handle many types of problems. For example in many-species community-level studies, where little is known about the correlation between species, and approaches to deal with such correlation have not yet been developed, non-parametric like the block bootstrap can be employed for inference. We can calculate SEs of community-level metrics like richness, proportion of species becoming critically endangered, average loss of area per species etc. The block bootstrap can be used to calculate standard errors of many quantities that may be of interest in univariate SDMs: e.g. SEs of coefficient estimates, projected probability of presence, proportion area lost under future climate, AUC etc. In these univariate SDM scenarios we may be able to model the spatial correlation, but even so, the block bootstrap may be required if the quantity of interest is complicated enough that its standard error is unknown, or if we don't trust our spatial model.
+ 
+\subsection{algorithm}
+
+The way the block bootstrap works is implemented varies from the standard bootstrap in the resampling unit. Instead of resampling from observations, we resample from \emph{blocks} of observations which are auto-correlated within a neighbourhood. For example, we might divide the study region into 30km blocks, then sample with replacement blocks of observations . See Figure Schema. 
+
+
+
+%(What is the SE of a binomial regression parameter: 1/(XtWX), gotten from the last ML least squares iteration)
+%
+% (\hilight{The SE of a proportion of two binomials can't be calculated without bootstrapping?})
+%
+%block bootstrap could be used to validate species niche models. Estimate uncertainty in model evaluation methods- e.g. AUC, Deviance, prediction error etc, accounting for spatial auto correlation.  Ideally you want to test predictions on an independent data set. Redrawing from the original data set is not valid when there's spatial auto correlation however if you redraw in blocks it may be?
+
+
+%\subsection{The Block Bootstrap}
+%\begin{enumerate}
+%\item What is block bootstrap
+%\item Why does it work/ It works
+%\item what and why extend to moving block bootstrap
+%\item Why is it useful and what are the limitations (non stationary 
+%\end{enumerate}
+
+\section{Implementation of block bootstrap} 
+\subsection{The code}
+In this section, explain the moving block bootstrap as implemented in my code. i.e. Make a grid and sample from the grid/ use a lookup table to save time, (use glm2 to deal with "unstable"/ funny resamples). 
+\subsection{choosing the block size}
+
+The blocklength parameter is key. The blocks should be large enough to capture the spatial correlation structure of the data. However if the blocks are too large there will not be enough variation between bootstrap replicates**. 
+
+There are several main approaches to choosing the block length parameter: subjective based on correlation structure in the data and Mean Squared Error minimisation. 
+
+``Subjective'' approaches include examining covariogram or variograms and looking for the point where spatial correlation becomes negligible. E.g. as suggested by \cite{kunsch1989jackknife}. Another approach is to use prior or expert knowlege of the autocorrelation structure. \cite{HALL01091995} demonstrated that the optimal order of the block length when estimating a bias or variance parameter is $n^{1/3}$ for time series and some people use this as a guideline to choosing $l$ \citep[e.g.][ in combination with expert/ prior knowledge of the autoregression structure]{Selle2010919}. In an SDM setting, this could be interpreted as choosing $l$ such that the block size is equal to $A^(1/3)$ where $A$ is the area of the study region (check up on this). 
+
+%http://www.jstor.org/discover/10.2307/2241719?uid=3737536&uid=2129&uid=2&uid=70&uid=4&sid=21103707101847
+
+%http://www.sciencedirect.com.wwwproxy0.library.unsw.edu.au/science/article/pii/S0022169404003828
+
+Mean squared error approaches aim to choose $l$ such that $MSE(\theta(l))$ is minimised. Hall showed for certain autoregressive processes that as $l$ increases we expect the bias of $theta$ to decrease and the variance to increase. The $MSE= Bias^2+Var$ is a solution to the bias variance trade of and we choose the $l$ minimises the MSE. The problem of calculating/ minimising the $MSE$ is non trivial. Two main approaches are suggested here. 
+
+The HHJ Mean squared error approach aims to first estimate the bias and variance of $SE_\theta(l)$, for various $l$, using subsampling. We then choose the $l$ that minimises $Var(SE_\theta(l)$. The subsampling method takes each bootstrap resample and performs a block bootstrap on it to calculate $SE_\theta(l)$, and hence $Var(SE_\theta(l))$ and $Bias(SE_\theta(l))$ on the $NBoot$ replicate $SE_\theta(l)$. The total number of resamples will be $NBoot^2$, resulting in a substantial increase in computation time.
+
+\cite{nordman2007optimal} provide a plug in approach for choosing the block size for the spatial block bootstrap that asymptotically minimises the mean squared error (MSE) of the standard error $SE_\theta$ we are trying to estimate-- using a non parametric plug-in method. The non parametric plug-in approach follows that in Lahiri 2003 for time series data. It has been implemented in \citep{liu2011investigating}. 
+
+The block length that minimises the MSE can be approximated by the following expression (lahiri 2003):
+\begin{equation}
+l^0_n = \left(\frac{VB^2}{rv}\right)^{\frac{1}{r+2}}\\
+B=2l_1(\sigma{l_1}-\sigma{2*l_1})\\
+v=\sigma{l_2}^4
+\end{equation}
+Where $V$ is the length/area/volume of the region, $r$ is the dimension of region ($r=2$ for spatial $2-D$ regions), and $B$ and $v$ are expressions relating to the Bias and variance of $S_{\theta}$. Namely:
+
+
+ It involves choosing two ``guess'' parameters of the block size, $b_1$ and $b_2$, and calculating the bootstrap variance estimate three times for block sizes $b_1$,$b_2$, and $2b_2$, where $b_1$ proportional to $b_2^{(4/3)}$
+
+
+
+\subsection{how to implement code tutorial? (or in supp)}
+\section{Example/ Case Study}
+\subsection{Case Study 1: Standard Errors/ Confidence Intervals}
+
+
+In this section we analyse a dataset of the presence/ absence locations of an assemblage of ferns. We are interested in what proportion of their range species are expected to lose and how many species are projected to become critically endangered, in the sense that they are projected to lose $>80\%$ of their range (as per IUCN guidelines), if temperatures rise by $2$ degrees? 
+
+The dataset at hand contained 3592 sites with 105 ferns species observed in total. Some sites contained zero fern species. Some sites were <200m apart and could not be considered independent. 
+
+Let $y_{sj}$ be the observed presence/ absence of species $s$, $s=1,...,S$, $S=105$, at quadrant $q_j$, j=$1,...,n$, $n=3595$. Let $x_j=\{T^{min}_j$,$T^{max}_j\}$ be the value of the covariates $5^{th}$ percentile minimum temperature and $95^{th}$ percentile maximum temperature at site $j$. Let $D=[y_{sj},x_j]$ be the concatenated dataset. 
+
+
+We first fitted a binomial GLM for each species. Using the residuals from these GLMs, we could examine whether there was spatial auto-correlation for each species by plotting spatial semi variograms (citation for variograms). E.g. See Figure \ref{sp62Var}. 
+
+Another approach we took to examining the sitewise correlation was to look at the correlation between the multivariate species residuals at sites. E.g. Figure \ref{sitewise}.
+
+\begin{figure}
+\label{sitewise}
+\includegraphics[width=\textwidth]{C:/Users/admin/Documents/MovingBlockBootstrap/Plots/PlotAutocorrelation.pdf}
+\caption{ (Needs a title?) The figure shows that sites that are closer together are more likely to contain similar species, after adjusting for environmental response. The autocorrelation has dissappeared at around 140km. Average pairwise correlation of site residuals is calculated for all sites within $d$ distance, for various $d$. A simulation envelope, constructed by randomly permuting site residuals 1000 times, demonstrates the range of responses expected under independence and hence the significance of the autocorrelation trend. There are increasing numbers of site pairs in the bins as $d$ increases, accounting for the higher natural variance of residuals in the bins with smaller $d$.}
+\end{figure}
+
+estimate the proportion area each species is expected to occupy by fitting $s$ generalised linear models (GLMs), one to each of the $s$ species with quadratic terms in the covariates. We examined covariances between species residuals at pairs of sites. Looking at the average 
+ by plotting variograms of the residuals. 
+We can calculate the expected area a species has by summing the probability of presence over all pixels. If the species future projected area is less that $20\%$ of the former projected area then it is critically endangered. We are interested in both the no and unlimited dispersal scenarios. We define the no dispersal scenario as such that a site cannot become more suitable for a species. We want to know the standard errors of the quantities below. 
+\[T_{unlimited dispersal}=\sum_sI[\sum_{j}\frac{y_{ij}^{t_2}}{y_{ij}^{t_1}}<0.2]\]
+\[T_{no dispersal}=\sum_sI[\sum_{j}\frac{min(y_{ij}^{t_2},y_{ij}^{t_1})}{y_{ij}^{t_1}}<0.2]\]
+\[T_{meanloss1}=mean[\sum_{j}\frac{y_{ij}^{t_2}}{y_{ij}^{t_1}}]\]
+\[T_{meanloss2}=mean[\sum_{j}\frac{min(y_{ij}^{t_2},y_{ij}^{t_1})}{y_{ij}^{t_1}}]\]
+
+We block bootstrap to understand the uncertainty in our estimates, to account for the interspecies correlation and spatial autocorrelation. As in Warton 2011, we resample rows keeping site information together, thereby accounting for interspecies correlation. We also resample ``blocks'' of sites, thus preserving the spatial correlation. The blocks are circular with radius $L$- we investigated different values of $L$ to choose the one which minimised an estimate of MSE(SE(T)). 
+
+We divide the region up into overlapping blocks, by placing a grid of 1km spaced points over the region. There are $k=1...N$ such points, labelled $r_k$. Each point designates the centre of a circular block of radius $L$. For each point, we calculate the set of quadrants within $L$ of $r_k$, so $B_k=\{q_i|dist(q_i,r_k)<L\}$
+
+%We varied the block radius $r$ using $20km, 100km$ as our initial estimates of $r$, with the length indicating what we think is independent. 
+%We also conducted an i.i.d. bootstrap to demonstrate the effect blocking has on the standard errors. Using the initial values of $r$ we then calculated the optimal block size and used that. 
+
+\begin{enumerate}
+\item Data exploration: Show that autocorrelation exists
+\end{enumerate}
+
+
+
+\subsubsection{Results}
+%Av.proportion.region.per.species(*40000)
+%\begin{tabular}{ l c r }
+%Blocklength & estimates & Standard.Errors \\
+%\hline
+%  iid & 165.7734 & 15.03194 \\
+%  l=20 & 165.7734 & 16.35898 \\
+%  l=100 & 165.7734 & 16.18634 \\
+%\end{tabular}
+%
+%
+%
+%Number.endangered
+%\begin{tabular}{ l c r }
+%Blocklength & estimates & Standard.Errors \\
+%\hline
+%  iid & 55 & 1.594589 \\
+%  l=20 & 55 & 1.557959 \\
+%  l=100 & 55 & 1.336161 \\
+%\end{tabular}
+
+\emph{Calculate optimal block size}
+
+
+\section{ Discussion/ Conclusion}
+\begin{enumerate}
+\item What we have demonstrated and why it is important
+\item Outline what other kinds of multi-species/ SDM questions you could use the block bootstrap for. 
+\item What are the methodological extensions to the block bootstrap and how could these be applied. 
+\item What are the limitations: computation, non stationary processes, are these limitations addressed by competing spatial correlation methods
+\item Conclusion
+\end{enumerate}
+
+Blocking has limited application when there is very strong spatial correlation across the entire region. 
+
+\citep{Pitt199878}
+\citep{taper2004bootstrapping}
+\bibliographystyle{ims}
+\bibliography{\hdrive /MovingBlockBootstrap/Writing/Tex/BootstrapPaperBib}
+\section{Supplementary Material}
+\subsection{Coding Tutorial}
+
+\section{Bootstrap Schema}
+The following algorithm implements the standard bootstrap. 
+$D$ is a $nxm$ matrix [Y|X] with $i=1...n$ rows.
+\begin{enumerate}
+\item Model fitting and calculation of quantity ($T(D)$) with data $D$.
+\item Create B pseudo samples $D_1,..,D_B$, for each pseudo sample $D_{pseudo}$:
+\begin{enumerate}
+\item Resample, $1,...,n$ with replacement $n$ times. Paste the rows of $D$ together to create $D_{pseudo}$ 
+\end{enumerate} 
+\item Using pseduo samples conduct model fitting and calculate $T(D_1),...,T(D_B)$ ( B times). 
+\item If calculating standard error of $T(D)$, calculate the variance of $T(D_1),...,T(D_B)$.
+\item If calculating p-value, calculate the number of $T(D_1),...,T(D_B)$ which are more extreme than the $T(D)$. 
+\end{enumerate}
+To do a moving block bootstrap we change step $2$ only.
+\begin{enumerate}
+\item Model fitting and calculation of quantity ($T(D)$) with data $D$.
+\item Create B pseudo samples $D_1,..,D_B$, by resampling according to scheme.. .  
+\begin{enumerate}
+\item sample x-y co-ordinates
+\item calculate ...
+\item 
+\end{enumerate}
+\item Using pseduo samples conduct model fitting and calculate $T(D_1),...,T(D_B)$ ( B times). 
+\item If calculating standard error of $T(D)$, calculate the variance of $T(D_1),...,T(D_B)$.
+\item If calculating p-value, calculate the number of $T(D_1),...,T(D_B)$ which are more extreme than the $T(D)$. 
+\end{enumerate}
+
+\end{document}
+
+ This paper aims to explain when and why you might use the block bootstrap for handling spatial auto-correlation in multivariate species abundance data  (or presence / absence) and it's implementation. Out  motivation was to do some inference on multivariate spatially auto-correlated abundance data. This kind of data is prevalent in ecology with people interested in testing the response of the assemblage of species to environmental covariates. We implement the block bootstrap to answer these kinds of multi-species questions. Our implementation is compatible for use with the existing R package mvabund \citep{wang2012mvabund} which handles multi-species questions. Arguably the block bootstrap is under-utilised in environmental science \citep{taper2004bootstrapping} and we want to increase knowledge of this useful useful tool by demonstrating it's use in multi-species applications, a new context for the application of the block bootstrap, and ease the implementation of it. 
+
+Ecological data has many correlations- e.g. correlation between species responses; spatial correlation between sites and temporal correlation between sampling times. The complexity of this kind of data means that modelling these correlations is not possible/ unfeasable leading to the consideration of non parametric methods such as bootstrapping. Bootstrapping is a tool that helps out when test statistics are complicated and their distribution is not well understood, or when distributional assumptions are not met for standard error formulas. It involves resampling observations, assuming they are independent, to recover underlying distributions of test statistics computationally. The block bootstrap \citep{lahiri2003resampling} is an extension of the bootstrap to cover cases where the observations are not independent, by resampling data in blocks of correlated observations, making it widely useful for ecological data. It has been applied in environmental science to handle temporal auto-correlation between repeated measures data, with the blocks consist of groups of consecutive observations through time, for example to construct 95 percent confidence intervals of sea bird population size \cite{clarke2003validating}, or to evaluate significance of test statistics \citep{nelson2012long, hinrichsen2013role}. It has also been applied to handle spatial auto-correlation \citep[for example][]{zhu2004nonparametric} and combinations of spatial and temporal correlation \citep[e.g.][]{valpine2010synchrony, reineking2010environmental}. Here we use it to handle spatial auto-correlation in  multivariate abundance data. There is a need for this paper as practitioners may not realise the block bootstrap can be applied in this context? Explaining our use of the block bootstrap in this context without having it buried in the methods part of a paper can assist practitioners to understand when and how to apply it? 
+
+
+
+Our motivating problem was to compare two types of climate variables: topoclimatic variables and macroclimatic variables at explaining the distribution of ferns and grasses in a region. It was hypothesised that topoclimatic variables would explain variation in species distributions that macroclimatic variables do not capture, and furthermore, the use of topoclimatic variables in species distribution models would lead to fewer species predicted to become critically endangered. The dataset available to test the hypothesis was a combination of surveys collected over a number of years, and many of the (Number) sites surveyed were close together and could not be considered independent samples (Figure). 
+
+We fitted glm's to each species separately with both macroclimatic variables, topoclimatic variables, and both sets of variables. To come up with an “overall answer”, across all species, for whether topoclimatic variables explains additional variation unexplained by macroclimatic variables we constructed a sum-of-likelihood ratio's statistic following the method of the mvabund package (citation). However due to correlation between species (columns, see Figure ) and correlation between sites (rows, see Figure), we don't know the distribution of the test statistic. To account for the interspecies correlation we bootstrap the data resampling the rows but keeping the columns together. This preserves the inter-species correlation structure in the data. However the conventional bootstrap assumes the resampling units are independent. To account for the spatial correlation we resample the sites in blocks. This preserved the spatial structure of the data. So in essence we can be  thought to be resampling (entire) blocks of species and blocks of sites 
+
+
+
+
+QOUTE:
+"This approximation is best
+if the dependence is weak (Davison and Hinkley, 1997)"
